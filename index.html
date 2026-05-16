@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PDCA da Avaliação de Desempenho</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --ink:#172033;
+      --muted:#657084;
+      --blue:#1f5eff;
+      --green:#13a66b;
+      --yellow:#f6b93b;
+      --red:#ef476f;
+      --purple:#7c3aed;
+      --line:#dfe6f1;
+      --shadow:0 18px 45px rgba(19,35,70,.12);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(31,94,255,.16), transparent 32%),
+        radial-gradient(circle at top right, rgba(19,166,107,.12), transparent 28%),
+        linear-gradient(180deg,#f7f9ff 0%,#eef3f9 100%);
+      color:var(--ink);
+    }
+    header{
+      padding:38px 24px 24px;
+      max-width:1180px;
+      margin:auto;
+    }
+    .hero{
+      background:linear-gradient(135deg,#0f2c62,#1f5eff 55%,#13a66b);
+      color:white;
+      border-radius:32px;
+      padding:34px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero:after{
+      content:"PDCA";
+      position:absolute;
+      right:-20px;
+      bottom:-48px;
+      font-size:138px;
+      font-weight:900;
+      opacity:.10;
+      letter-spacing:10px;
+    }
+    .tag{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      background:rgba(255,255,255,.16);
+      border:1px solid rgba(255,255,255,.25);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+    h1{
+      margin:0;
+      font-size:clamp(30px,5vw,56px);
+      line-height:1.02;
+      letter-spacing:-1.8px;
+      max-width:850px;
+    }
+    .subtitle{
+      max-width:780px;
+      font-size:17px;
+      line-height:1.55;
+      color:rgba(255,255,255,.86);
+      margin:18px 0 0;
+    }
+    main{max-width:1180px;margin:auto;padding:0 24px 50px}
+    section{margin-top:26px}
+
+    .intro-pdca{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:18px;
+      align-items:stretch;
+      margin-top:26px;
+    }
+    .intro-main,.intro-side{
+      background:white;
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+    .intro-main h2{font-size:30px;margin-bottom:10px}
+    .intro-main p{color:var(--muted);line-height:1.6;margin:0}
+    .mini-cycle{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      height:100%;
+    }
+    .mini{
+      border-radius:20px;
+      padding:16px;
+      background:color-mix(in srgb, var(--c) 10%, white);
+      border:1px solid color-mix(in srgb, var(--c) 24%, white);
+    }
+    .mini b{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:17px;
+      color:var(--c);
+      margin-bottom:7px;
+    }
+    .mini span{
+      display:block;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+
+    .section-title{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:18px;
+      margin:0 0 16px;
+    }
+    h2{font-size:28px;margin:0;letter-spacing:-.6px}
+    .hint{color:var(--muted);font-size:14px;line-height:1.45}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:16px;
+    }
+    .pdca-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:0 10px 30px rgba(20,31,55,.07);
+      position:relative;
+      min-height:225px;
+      overflow:hidden;
+    }
+    .pdca-card:before{
+      content:"";
+      position:absolute;
+      left:0;right:0;top:0;height:7px;
+      background:var(--accent);
+    }
+    .letter{
+      width:52px;height:52px;border-radius:18px;
+      display:grid;place-items:center;
+      background:color-mix(in srgb, var(--accent) 14%, white);
+      color:var(--accent);
+      font-weight:900;
+      font-size:28px;
+      margin-bottom:15px;
+    }
+    .pdca-card h3{margin:0 0 10px;font-size:20px}
+    .pdca-card p{margin:0;color:var(--muted);line-height:1.45;font-size:14px}
+    .canvas{
+      background:rgba(255,255,255,.68);
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(8px);
+    }
+    .timeline{
+      display:grid;
+      grid-template-columns:repeat(8, minmax(170px,1fr));
+      gap:14px;
+      overflow-x:auto;
+      padding-bottom:8px;
+    }
+    .stage{
+      background:white;
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:16px;
+      min-height:170px;
+      position:relative;
+      box-shadow:0 8px 24px rgba(20,31,55,.06);
+    }
+    .stage .num{
+      width:32px;height:32px;border-radius:12px;
+      display:grid;place-items:center;
+      background:#eef3ff;
+      color:#1f5eff;
+      font-weight:800;
+      margin-bottom:12px;
+    }
+    .stage h4{margin:0 0 8px;font-size:16px}
+    .stage p{margin:0;color:var(--muted);font-size:13px;line-height:1.38}
+    .stage small{
+      position:absolute;
+      right:14px;
+      bottom:14px;
+      font-weight:800;
+      color:var(--pdca);
+      background:color-mix(in srgb, var(--pdca) 12%, white);
+      padding:5px 8px;
+      border-radius:999px;
+    }
+    .app{
+      display:grid;
+      grid-template-columns:330px 1fr;
+      gap:18px;
+      align-items:start;
+    }
+    .panel,.formbox{
+      background:white;border:1px solid var(--line);border-radius:28px;padding:20px;box-shadow:var(--shadow);
+    }
+    .steps{display:flex;flex-direction:column;gap:10px}
+    .stepbtn{
+      display:flex;align-items:center;gap:12px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:13px;
+      background:#f8faff;
+      color:var(--muted);
+      cursor:pointer;
+      transition:.2s;
+      text-align:left;
+      width:100%;
+    }
+    .stepbtn.active{background:#eef5ff;border-color:#9ec0ff;color:var(--ink);transform:translateX(4px)}
+    .stepbtn.done{background:#f0fff8;border-color:#97e4c2;color:#116244}
+    .stepbtn.locked{opacity:.45;cursor:not-allowed}
+    .badge{
+      width:34px;height:34px;border-radius:13px;display:grid;place-items:center;
+      font-weight:900;background:white;border:1px solid var(--line);
+      flex:0 0 auto;
+    }
+    .progress{
+      height:12px;background:#e8edf5;border-radius:999px;overflow:hidden;margin:18px 0 4px;
+    }
+    .bar{height:100%;width:0%;background:linear-gradient(90deg,#1f5eff,#13a66b);transition:.35s}
+    .statusline{font-size:13px;color:var(--muted)}
+    .form-head{
+      display:flex;justify-content:space-between;gap:18px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:16px;
+    }
+    .pill{border-radius:999px;background:#eef3ff;color:#1f5eff;font-weight:800;font-size:12px;padding:8px 10px;white-space:nowrap}
+    .questions{display:grid;gap:14px}
+    .q{
+      border:1px solid var(--line);background:#fbfcff;border-radius:18px;padding:14px;
+    }
+    .q label{font-weight:750;display:block;margin-bottom:10px;font-size:14px}
+    select,textarea,input{
+      width:100%;
+      border:1px solid #ced8e8;
+      border-radius:14px;
+      padding:11px 12px;
+      font:inherit;
+      background:white;
+      color:var(--ink);
+      outline:none;
+    }
+    textarea{min-height:86px;resize:vertical}
+    .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+    button.primary,button.secondary{
+      border:0;border-radius:15px;padding:12px 16px;font-weight:850;cursor:pointer;
+    }
+    button.primary{background:#1f5eff;color:white;box-shadow:0 10px 22px rgba(31,94,255,.25)}
+    button.secondary{background:#eef3ff;color:#1f5eff}
+    .locked-screen{
+      text-align:center;
+      padding:70px 20px;
+      color:var(--muted);
+    }
+    .lockicon{font-size:45px;margin-bottom:12px}
+    .report{
+      display:none;
+      background:#101828;color:white;border-radius:28px;padding:22px;margin-top:18px;box-shadow:var(--shadow);
+    }
+    .report h3{margin:0 0 12px}
+    .report-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+    .metric{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px}
+    .metric b{font-size:24px;display:block}
+    .metric span{font-size:12px;color:rgba(255,255,255,.7)}
+    .pdi-list{margin:12px 0 0;padding-left:18px;color:rgba(255,255,255,.86)}
+    footer{text-align:center;color:var(--muted);font-size:13px;padding:20px 0 36px}
+    @media(max-width:900px){
+      .intro-pdca{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr 1fr}
+      .app{grid-template-columns:1fr}
+      .report-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:580px){
+      header,main{padding-left:14px;padding-right:14px}
+      .hero{padding:24px}
+      .grid{grid-template-columns:1fr}
+      .form-head{flex-direction:column}
+      .report-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <div class="tag">🔁 Ciclo de melhoria contínua em RH</div>
+      <h1>PDCA da Avaliação de Desempenho</h1>
+      <p class="subtitle">Um modelo simples, visual e interativo para apresentar como a avaliação deixa de ser um evento isolado e passa a funcionar como um ciclo: planejar, executar, verificar e agir.</p>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="intro-pdca">
+        <div class="intro-main">
+          <div class="tag" style="background:#eef3ff;color:#1f5eff;border-color:#d8e5ff;margin-bottom:14px">📌 Entenda antes de começar</div>
+          <h2>O que é PDCA?</h2>
+          <p><b>PDCA</b> é um ciclo de melhoria contínua formado por quatro movimentos: <b>Planejar, Executar, Verificar e Agir</b>. Na avaliação de desempenho, ele ajuda a organizar o processo para que a avaliação não seja apenas um formulário, mas um caminho completo de análise, feedback e desenvolvimento.</p>
+        </div>
+        <div class="intro-side">
+          <div class="mini-cycle">
+            <div class="mini" style="--c:#1f5eff"><b>P · Planejar</b><span>Define critérios, perguntas, prazos e regras do ciclo.</span></div>
+            <div class="mini" style="--c:#13a66b"><b>D · Executar</b><span>Realiza a autoavaliação, avaliação do líder e coleta das respostas.</span></div>
+            <div class="mini" style="--c:#f6b93b"><b>C · Verificar</b><span>Analisa resultados, gaps e expectativas para o próximo ciclo.</span></div>
+            <div class="mini" style="--c:#ef476f"><b>A · Agir</b><span>Transforma o resultado em feedback, PDI e ações práticas.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Canvas do processo de avaliação</h2>
+        <div class="hint">Etapas em formato visual, estilo Trello.</div>
+      </div>
+      <div class="canvas">
+        <div class="timeline">
+          <div class="stage" style="--pdca:#1f5eff"><div class="num">1</div><h4>Lançamento da avaliação</h4><p>Comunicação do ciclo, regras, prazos, objetivo e responsabilidades.</p><small>P</small></div>
+          <div class="stage" style="--pdca:#1f5eff"><div class="num">2</div><h4>Prazo de preenchimento</h4><p>Período oficial para colaboradores e líderes responderem às etapas.</p><small>P</small></div>
+          <div class="stage" style="--pdca:#13a66b"><div class="num">3</div><h4>Reforço das áreas</h4><p>Acompanhamento da adesão e lembretes para conclusão dentro do prazo.</p><small>D</small></div>
+          <div class="stage" style="--pdca:#13a66b"><div class="num">4</div><h4>Autoavaliação</h4><p>O colaborador avalia suas entregas, competências e comportamento.</p><small>D</small></div>
+          <div class="stage" style="--pdca:#13a66b"><div class="num">5</div><h4>Avaliação do líder</h4><p>O gestor avalia o colaborador com base em fatos, resultados e exemplos.</p><small>D</small></div>
+          <div class="stage" style="--pdca:#f6b93b"><div class="num">6</div><h4>Expectativas</h4><p>Alinhamento do que se espera para o próximo ciclo de desempenho.</p><small>C</small></div>
+          <div class="stage" style="--pdca:#ef476f"><div class="num">7</div><h4>Feedback estruturado</h4><p>Conversa entre líder e colaborador com pontos fortes e oportunidades.</p><small>A</small></div>
+          <div class="stage" style="--pdca:#ef476f"><div class="num">8</div><h4>Criação do PDI</h4><p>Plano de desenvolvimento com ações, prazos e acompanhamento.</p><small>A</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Simulação do sistema por etapas</h2>
+        <div class="hint">As etapas seguintes só liberam após concluir a anterior.</div>
+      </div>
+      <div class="app">
+        <aside class="panel">
+          <h3 style="margin-top:0">Fluxo bloqueado</h3>
+          <div class="steps" id="steps"></div>
+          <div class="progress"><div class="bar" id="bar"></div></div>
+          <div class="statusline" id="statusline">0% concluído</div>
+        </aside>
+
+        <div>
+          <div class="formbox">
+            <div id="formArea"></div>
+          </div>
+          <div class="report" id="report">
+            <h3>Resultado final da simulação</h3>
+            <p style="color:rgba(255,255,255,.78);margin:0">A avaliação foi concluída e transformada em um plano de desenvolvimento.</p>
+            <div class="report-grid">
+              <div class="metric"><b id="mAuto">0.0</b><span>Média autoavaliação</span></div>
+              <div class="metric"><b id="mLider">0.0</b><span>Média líder</span></div>
+              <div class="metric"><b id="mGap">0.0</b><span>Gap percebido</span></div>
+              <div class="metric"><b>100%</b><span>Ciclo finalizado</span></div>
+            </div>
+            <ul class="pdi-list" id="pdiList"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Protótipo demonstrativo para apresentação acadêmica ou corporativa.</footer>
+
+<script>
+const stageData = [
+  {key:'auto', title:'Autoavaliação do colaborador', pdca:'D', help:'O colaborador responde até 7 perguntas sobre desempenho, competências e entregas.', locked:false},
+  {key:'lider', title:'Avaliação do líder', pdca:'D', help:'O líder avalia o colaborador usando a mesma base de critérios.', locked:true},
+  {key:'expectativas', title:'Avaliação de expectativas', pdca:'C', help:'A etapa compara resultado atual com o que se espera para o próximo ciclo.', locked:true},
+  {key:'feedback', title:'Feedback estruturado', pdca:'A', help:'O sistema organiza pontos fortes, melhorias e combinados da conversa.', locked:true},
+  {key:'pdi', title:'Criação do PDI', pdca:'A', help:'Define ações, prazos e responsáveis para o desenvolvimento.', locked:true}
+];
+
+const questions = [
+ 'Entrega resultados dentro dos prazos combinados?',
+ 'Demonstra qualidade técnica nas atividades?',
+ 'Contribui para o trabalho em equipe?',
+ 'Comunica dificuldades e avanços com clareza?',
+ 'Assume responsabilidade pelas próprias entregas?',
+ 'Busca aprender e melhorar continuamente?',
+ 'Age de acordo com os valores e a cultura da organização?'
+];
+
+let current = 0;
+let completed = {};
+let answers = {auto:[], lider:[], expectativas:{}, feedback:{}, pdi:{}};
+
+const stepsEl = document.getElementById('steps');
+const formArea = document.getElementById('formArea');
+const bar = document.getElementById('bar');
+const statusline = document.getElementById('statusline');
+
+function renderSteps(){
+  stepsEl.innerHTML = '';
+  stageData.forEach((s,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'stepbtn ' + (i===current?'active ':'') + (completed[s.key]?'done ':'') + (isLocked(i)?'locked':'');
+    btn.innerHTML = `<span class="badge">${completed[s.key]?'✓':i+1}</span><span><b>${s.title}</b><br><small>${isLocked(i)?'Bloqueado':'Liberado'} · PDCA ${s.pdca}</small></span>`;
+    btn.onclick = ()=>{ if(!isLocked(i)){ current=i; render(); } };
+    stepsEl.appendChild(btn);
+  });
+  const done = Object.keys(completed).length;
+  const pct = Math.round((done/stageData.length)*100);
+  bar.style.width = pct + '%';
+  statusline.textContent = pct + '% concluído';
+}
+
+function isLocked(i){
+  if(i===0) return false;
+  return !completed[stageData[i-1].key];
+}
+
+function render(){
+  renderSteps();
+  const stage = stageData[current];
+  if(isLocked(current)){
+    formArea.innerHTML = `<div class="locked-screen"><div class="lockicon">🔒</div><h3>Etapa bloqueada</h3><p>Conclua a etapa anterior para liberar este momento do ciclo.</p></div>`;
+    return;
+  }
+  if(stage.key==='auto' || stage.key==='lider') renderRating(stage);
+  if(stage.key==='expectativas') renderExpectativas(stage);
+  if(stage.key==='feedback') renderFeedback(stage);
+  if(stage.key==='pdi') renderPdi(stage);
+}
+
+function head(stage){
+  return `<div class="form-head"><div><h3 style="margin:0 0 8px">${stage.title}</h3><div class="hint">${stage.help}</div></div><div class="pill">Etapa ${current+1} · PDCA ${stage.pdca}</div></div>`;
+}
+
+function renderRating(stage){
+  const saved = answers[stage.key] || [];
+  formArea.innerHTML = head(stage) + `<div class="questions">` + questions.map((q,i)=>`
+    <div class="q">
+      <label>${i+1}. ${q}</label>
+      <select id="q${i}">
+        <option value="">Selecione uma nota</option>
+        <option value="1" ${saved[i]==1?'selected':''}>1 · Precisa evoluir</option>
+        <option value="2" ${saved[i]==2?'selected':''}>2 · Em desenvolvimento</option>
+        <option value="3" ${saved[i]==3?'selected':''}>3 · Atende</option>
+        <option value="4" ${saved[i]==4?'selected':''}>4 · Supera</option>
+        <option value="5" ${saved[i]==5?'selected':''}>5 · Referência</option>
+      </select>
+    </div>`).join('') + `</div>
+    <div class="actions"><button class="secondary" onclick="resetDemo()">Reiniciar</button><button class="primary" onclick="saveRating('${stage.key}')">Concluir etapa</button></div>`;
+}
+
+function saveRating(key){
+  const vals = questions.map((_,i)=>Number(document.getElementById('q'+i).value));
+  if(vals.some(v=>!v)){ alert('Preencha todas as 7 perguntas para avançar.'); return; }
+  answers[key]=vals;
+  completed[key]=true;
+  next();
+}
+
+function renderExpectativas(stage){
+  formArea.innerHTML = head(stage) + `
+    <div class="questions">
+      <div class="q"><label>Principal expectativa para o próximo ciclo</label><textarea id="exp1" placeholder="Ex.: melhorar produtividade, assumir novos desafios, fortalecer liderança...">${answers.expectativas.exp1||''}</textarea></div>
+      <div class="q"><label>Competência prioritária a desenvolver</label><input id="exp2" placeholder="Ex.: comunicação, planejamento, postura, análise técnica..." value="${answers.expectativas.exp2||''}"></div>
+      <div class="q"><label>Resultado esperado em até 90 dias</label><textarea id="exp3" placeholder="Descreva o resultado esperado de forma prática.">${answers.expectativas.exp3||''}</textarea></div>
+    </div>
+    <div class="actions"><button class="secondary" onclick="prev()">Voltar</button><button class="primary" onclick="saveExpectativas()">Concluir etapa</button></div>`;
+}
+
+function saveExpectativas(){
+  const exp1 = document.getElementById('exp1').value.trim();
+  const exp2 = document.getElementById('exp2').value.trim();
+  const exp3 = document.getElementById('exp3').value.trim();
+  if(!exp1 || !exp2 || !exp3){ alert('Preencha todos os campos para avançar.'); return; }
+  answers.expectativas={exp1,exp2,exp3};
+  completed.expectativas=true;
+  next();
+}
+
+function renderFeedback(stage){
+  formArea.innerHTML = head(stage) + `
+    <div class="questions">
+      <div class="q"><label>Pontos fortes reconhecidos</label><textarea id="fb1">${answers.feedback.fb1||''}</textarea></div>
+      <div class="q"><label>Pontos de melhoria combinados</label><textarea id="fb2">${answers.feedback.fb2||''}</textarea></div>
+      <div class="q"><label>Combinado entre líder e colaborador</label><textarea id="fb3">${answers.feedback.fb3||''}</textarea></div>
+    </div>
+    <div class="actions"><button class="secondary" onclick="prev()">Voltar</button><button class="primary" onclick="saveFeedback()">Concluir etapa</button></div>`;
+}
+
+function saveFeedback(){
+  const fb1 = document.getElementById('fb1').value.trim();
+  const fb2 = document.getElementById('fb2').value.trim();
+  const fb3 = document.getElementById('fb3').value.trim();
+  if(!fb1 || !fb2 || !fb3){ alert('Preencha todos os campos para avançar.'); return; }
+  answers.feedback={fb1,fb2,fb3};
+  completed.feedback=true;
+  next();
+}
+
+function renderPdi(stage){
+  formArea.innerHTML = head(stage) + `
+    <div class="questions">
+      <div class="q"><label>Ação de desenvolvimento 1</label><input id="pdi1" value="${answers.pdi.pdi1||''}" placeholder="Ex.: participar de treinamento técnico"></div>
+      <div class="q"><label>Ação de desenvolvimento 2</label><input id="pdi2" value="${answers.pdi.pdi2||''}" placeholder="Ex.: realizar reunião quinzenal com o líder"></div>
+      <div class="q"><label>Prazo e responsável</label><input id="pdi3" value="${answers.pdi.pdi3||''}" placeholder="Ex.: 90 dias · colaborador e gestor"></div>
+    </div>
+    <div class="actions"><button class="secondary" onclick="prev()">Voltar</button><button class="primary" onclick="savePdi()">Finalizar ciclo</button></div>`;
+}
+
+function savePdi(){
+  const pdi1 = document.getElementById('pdi1').value.trim();
+  const pdi2 = document.getElementById('pdi2').value.trim();
+  const pdi3 = document.getElementById('pdi3').value.trim();
+  if(!pdi1 || !pdi2 || !pdi3){ alert('Preencha todos os campos para finalizar.'); return; }
+  answers.pdi={pdi1,pdi2,pdi3};
+  completed.pdi=true;
+  renderSteps();
+  showReport();
+}
+
+function next(){
+  current = Math.min(current+1, stageData.length-1);
+  render();
+}
+function prev(){
+  current = Math.max(current-1,0);
+  render();
+}
+function avg(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function showReport(){
+  const a = avg(answers.auto);
+  const l = avg(answers.lider);
+  document.getElementById('mAuto').textContent = a.toFixed(1);
+  document.getElementById('mLider').textContent = l.toFixed(1);
+  document.getElementById('mGap').textContent = Math.abs(l-a).toFixed(1);
+  document.getElementById('pdiList').innerHTML = `
+    <li><b>Expectativa:</b> ${answers.expectativas.exp1}</li>
+    <li><b>Competência foco:</b> ${answers.expectativas.exp2}</li>
+    <li><b>PDI 1:</b> ${answers.pdi.pdi1}</li>
+    <li><b>PDI 2:</b> ${answers.pdi.pdi2}</li>
+    <li><b>Prazo e responsável:</b> ${answers.pdi.pdi3}</li>`;
+  document.getElementById('report').style.display='block';
+  document.getElementById('report').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function resetDemo(){
+  current=0; completed={}; answers={auto:[], lider:[], expectativas:{}, feedback:{}, pdi:{}};
+  document.getElementById('report').style.display='none';
+  render();
+}
+render();
+</script>
+</body>
+</html>
